@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 @Service
@@ -42,8 +43,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public User updateUserById(User user) {
-        return  userRepository.save(user);
+    public void updateUserById(User user) {
+        if (userRepository.findByUsername(user.getUsername()) != null &&
+                !userRepository.findByUsername(user.getUsername()).getId().equals(user.getId())) {
+            throw new InvalidParameterException("Cannot save user, such email already exists in the database: "
+                    + user.getUsername());
+        }
+        if (user.getPassword().isEmpty()) {
+            user.setPassword(userRepository.findById(user.getId()).get().getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        userRepository.save(user);
     }
 
     @Override

@@ -3,10 +3,12 @@ package ru.kata.spring.boot_security.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "users")
